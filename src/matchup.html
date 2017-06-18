@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html ng-app="matchupApp">
+
+<head>
+    <title>Matchup Analyzer</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet" />
+    <link href="css/bootstrap-theme.min.css" rel="stylesheet" />
+    <link href="css/matchup.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/matchup.js"></script>
+</head>
+
+<body ng-controller="matchupCtrl">
+    
+    <div class="container" style="width:100%">
+        <div class="panel" style="width:100%">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#roster" aria-controls="roster" role="tab" data-toggle="tab">Roster</a>
+                </li>
+                <li role="presentation">
+                    <a href="#lineup" aria-controls="lineup" role="tab" data-toggle="tab">Lineup</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="roster">
+                    <ng-include src="'teams.html'"></ng-include>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="lineup">
+                    <div ng-repeat="team in matchup.teams" style="float:left; width:50%; box-sizing:border-box; padding: 5px;">
+                        <div ng-repeat="day in team.days">
+                            <h4>{{ day.dayOfWeek }}</h4>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Slot</th>
+                                        <th>Player</th>
+                                        <th>FGM-A</th>
+                                        <th>FG%</th>
+                                        <th>FTM-A</th>
+                                        <th>FT%</th>
+                                        <th>3PTM</th>
+                                        <th>PTS</th>
+                                        <th>REB</th>
+                                        <th>AST</th>
+                                        <th>STL</th>
+                                        <th>BLK</th>
+                                        <th>TO</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-striped">
+                                    <tr ng-repeat="player in day.players">
+                                        <td>{{ positions[$index] }}</td>
+                                        <td>
+                                            <input id="{{ $parent.$parent.$index + '-' + $parent.$index + '-' + $index }}" type="text" style="width:200px" ng-model="model" ng-change="typeName($parent.$parent.$index, $parent.$index, $index)" />
+                                            <ul ng-show="currentDroplist == $parent.$parent.$index + '-' + $parent.$index + '-' + $index" class="droplist">
+                                                <li ng-repeat="x in players  | playerByPosition: positions[$parent.$index] | filter:model track by $index">
+                                                    <a ng-click="fillPlayer(x.id, x.name, $parent.$parent.$parent.$index, $parent.$parent.$index, $parent.$index)">{{x.name}}</a>
+                                                </li>
+                                            </ul>
+                                            <!--
+                                                <select style="width:100px" ng-change="updatePlayer($parent.$parent.$index, $parent.$index, $index)">
+                                                    <option value="0">Empty</option>
+                                                    <option ng-repeat="x in players" value="{{x.id}}">{{x.name}}</option>
+                                                </select>
+                                            -->
+                                        </td>
+                                        <td>{{ player.fgm | number:1 }}-{{ player.fga | number:1 }}</td>
+                                        <td>{{ player.fg_pct | number:3 }}</td>
+                                        <td>{{ player.ftm | number:1 }}-{{ player.fta | number:1 }}</td>
+                                        <td>{{ player.ft_pct | number:3 }}</td>
+                                        <td>{{ player.fg3m | number:1 }}</td>
+                                        <td>{{ player.pts | number:1 }}</td>
+                                        <td>{{ player.reb | number:1 }}</td>
+                                        <td>{{ player.ast | number:1 }}</td>
+                                        <td>{{ player.stl | number:1 }}</td>
+                                        <td>{{ player.blk | number:1 }}</td>
+                                        <td>{{ player.tov | number:1 }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td>{{ day.total.fgm | number:1 }}-{{ day.total.fga | number:1 }}</td>
+                                        <td>{{ day.total.fg_pct | number:3 }}</td>
+                                        <td>{{ day.total.ftm | number:1 }}-{{ day.total.fta | number:1 }}</td>
+                                        <td>{{ day.total.ft_pct | number:3 }}</td>
+                                        <td>{{ day.total.fg3m | number:1 }}</td>
+                                        <td ng-style="getGreaterStyle($index, $parent.$index, 'pts')">{{ day.total.pts | number:1 }}</td>
+                                        <td ng-style="getGreaterStyle($index, $parent.$index, 'reb')">{{ day.total.reb | number:1 }}</td>
+                                        <td ng-style="getGreaterStyle($index, $parent.$index, 'ast')">{{ day.total.ast | number:1 }}</td>
+                                        <td ng-style="getGreaterStyle($index, $parent.$index, 'stl')">{{ day.total.stl | number:1 }}</td>
+                                        <td ng-style="getGreaterStyle($index, $parent.$index, 'blk')">{{ day.total.blk | number:1 }}</td>
+                                        <td ng-style="getLesserStyle($index, $parent.$index, 'tov')">{{ day.total.tov | number:1 }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>FGM-A</th>
+                                    <th>FG%</th>
+                                    <th>FTM-A</th>
+                                    <th>FT%</th>
+                                    <th>3PTM</th>
+                                    <th>PTS</th>
+                                    <th>REB</th>
+                                    <th>AST</th>
+                                    <th>STL</th>
+                                    <th>BLK</th>
+                                    <th>TO</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <h4>Week Total:</h4></td>
+                                    <td></td>
+                                    <td>{{ team.total.fgm | number:1 }}-{{ team.total.fga | number:1 }}</td>
+                                    <td ng-style="getGreaterStyle(-1, $index, 'fg_pct')">{{ team.total.fg_pct | number:3 }}</td>
+                                    <td>{{ team.total.ftm | number:1 }}-{{ team.total.fta | number:1 }}</td>
+                                    <td ng-style="getGreaterStyle(-1, $index, 'ft_pct')">{{ team.total.ft_pct | number:3 }}</td>
+                                    <td ng-style="getGreaterStyle(-1, $index, 'fg3m')">{{ team.total.fg3m | number:1 }}</td>
+                                    <td ng-style="getGreaterStyle(-1, $index, 'pts')">{{ team.total.pts | number:1 }}</td>
+                                    <td ng-style="getGreaterStyle(-1, $index, 'reb')">{{ team.total.reb | number:1 }}</td>
+                                    <td ng-style="getGreaterStyle(-1, $index, 'ast')">{{ team.total.ast | number:1 }}</td>
+                                    <td ng-style="getGreaterStyle(-1, $index, 'stl')">{{ team.total.stl | number:1 }}</td>
+                                    <td ng-style="getGreaterStyle(-1, $index, 'blk')">{{ team.total.blk | number:1 }}</td>
+                                    <td ng-style="getLesserStyle(-1, $index, 'tov')">{{ team.total.tov | number:1 }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

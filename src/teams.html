@@ -1,0 +1,23 @@
+<table class="table table-striped">
+<thead>
+<tr>
+    <th>Position</th>
+    <th>Name</th>
+</tr>
+</thead>
+<tbody class="table-striped">
+    <tr>
+        <td>
+            
+        </td>
+    </tr>
+    <tr ng-repeat="player in day.players">
+        <td>
+            <select style="width:100px" ng-model="selectedPlayer[$parent.$parent.$index][$parent.$index][$index]" ng-change="updatePlayer($parent.$parent.$index, $parent.$index, $index)">
+                <option value="0">Empty</option>
+                <option ng-repeat="x in players" value="{{x.id}}">{{x.name}}</option>
+            </select>
+        </td>    
+    </tr>
+</tbody>
+</table>

@@ -1,0 +1,103 @@
+<!--
+<select ng-model="lastDays" ng-change="selectLastN(lastDays)">
+    <option ng-repeat="item in lastNDays" ng-value="item.val">{{ item.label }}</option>    
+</select>
+-->
+<div ng-repeat="team in matchup.teams" style="float:left; width:50%; box-sizing:border-box; padding: 5px;">
+    <div ng-repeat="day in team.days">
+        <h4>{{ day.dayOfWeek }}</h4>
+        <table class="table table-striped">
+        <thead>
+            <tr>
+            	<th></th>
+            	<th>FGM-A</th>
+            	<th>FG%</th>
+            	<th>FTM-A</th>
+            	<th>FT%</th>
+            	<th>3PTM</th>
+            	<th>PTS</th>
+            	<th>REB</th>
+            	<th>AST</th>
+            	<th>STL</th>
+            	<th>BLK</th>
+            	<th>TO</th>
+            </tr>
+        </thead>
+        <tbody class="table-striped">
+            <tr ng-repeat="player in day.players">
+            	<td>
+                    <input type="text" style="width:200px" ng-model="model"/>
+                    <ul class="droplist" ng-repeat="x in players | filter:model track by $index">
+                        <li>{{x.name}}</li>
+                    </ul>
+                    <!--
+            		<select style="width:100px" ng-change="updatePlayer($parent.$parent.$index, $parent.$index, $index)">
+            			<option value="0">Empty</option>
+            			<option ng-repeat="x in players" value="{{x.id}}">{{x.name}}</option>
+            		</select>
+                    -->
+            	</td>
+            	<td>{{ player.fgm | number:1 }}-{{ player.fga | number:1 }}</td>
+            	<td>{{ player.fg_pct | number:3 }}</td>
+            	<td>{{ player.ftm | number:1 }}-{{ player.fta | number:1 }}</td>
+            	<td>{{ player.ft_pct | number:3 }}</td>
+            	<td>{{ player.fg3m | number:1 }}</td>
+            	<td>{{ player.pts | number:1 }}</td>
+            	<td>{{ player.reb | number:1 }}</td>
+            	<td>{{ player.ast | number:1 }}</td>
+            	<td>{{ player.stl | number:1 }}</td>
+            	<td>{{ player.blk | number:1 }}</td>
+            	<td>{{ player.tov | number:1 }}</td>
+            </tr>
+            <tr>
+            	<td></td>
+            	<td>{{ day.total.fgm | number:1 }}-{{ day.total.fga | number:1 }}</td>
+            	<td>{{ day.total.fg_pct | number:3  }}</td>
+            	<td>{{ day.total.ftm | number:1 }}-{{ day.total.fta | number:1 }}</td>
+            	<td>{{ day.total.ft_pct | number:3  }}</td>
+            	<td>{{ day.total.fg3m | number:1  }}</td>
+            	<td ng-style="getGreaterStyle($index, $parent.$index, 'pts')">{{ day.total.pts | number:1  }}</td>
+            	<td ng-style="getGreaterStyle($index, $parent.$index, 'reb')">{{ day.total.reb | number:1  }}</td>
+            	<td ng-style="getGreaterStyle($index, $parent.$index, 'ast')">{{ day.total.ast | number:1  }}</td>
+            	<td ng-style="getGreaterStyle($index, $parent.$index, 'stl')">{{ day.total.stl | number:1  }}</td>
+            	<td ng-style="getGreaterStyle($index, $parent.$index, 'blk')">{{ day.total.blk | number:1  }}</td>
+            	<td ng-style="getLesserStyle($index, $parent.$index, 'tov')">{{ day.total.tov | number:1  }}</td>
+            </tr>
+        </tbody>
+        </table>
+    </div>
+    <table class="table">
+    <thead>
+        <tr>
+        <th></th>
+        <th>FGM-A</th>
+        <th>FG%</th>
+        <th>FTM-A</th>
+        <th>FT%</th>
+        <th>3PTM</th>
+        <th>PTS</th>
+        <th>REB</th>
+        <th>AST</th>
+        <th>STL</th>
+        <th>BLK</th>
+        <th>TO</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td><h4>Week Total:</h4></td>
+        <td>{{ team.total.fgm | number:1 }}-{{ team.total.fga | number:1 }}</td>
+        <td ng-style="getGreaterStyle(-1, $index, 'fg_pct')">{{ team.total.fg_pct | number:3  }}</td>
+        <td>{{ team.total.ftm | number:1 }}-{{ team.total.fta | number:1 }}</td>
+        <td ng-style="getGreaterStyle(-1, $index, 'ft_pct')">{{ team.total.ft_pct | number:3  }}</td>
+        <td ng-style="getGreaterStyle(-1, $index, 'fg3m')">{{ team.total.fg3m | number:1  }}</td>
+        <td ng-style="getGreaterStyle(-1, $index, 'pts')">{{ team.total.pts | number:1  }}</td>
+        <td ng-style="getGreaterStyle(-1, $index, 'reb')">{{ team.total.reb | number:1  }}</td>
+        <td ng-style="getGreaterStyle(-1, $index, 'ast')">{{ team.total.ast | number:1  }}</td>
+        <td ng-style="getGreaterStyle(-1, $index, 'stl')">{{ team.total.stl | number:1  }}</td>
+        <td ng-style="getGreaterStyle(-1, $index, 'blk')">{{ team.total.blk | number:1  }}</td>
+        <td ng-style="getLesserStyle(-1, $index, 'tov')">{{ team.total.tov | number:1  }}</td>
+    </tr>
+    </tbody>
+    </table>
+</div>
